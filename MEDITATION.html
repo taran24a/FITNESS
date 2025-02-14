@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meditation Timer Clock</title>
+    <link rel="icon" href="favicon.png" type="image/x-icon"> <!-- Favicon link -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(to bottom, #8ee6dd, #098e7c);
+           color: #333;
+        }
+
+        
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            border: #333;
+            border-radius: 40px;
+        }
+        .clock {
+            font-size: 48px;
+            margin: 20px;
+            color: #0d3b4a;
+        }
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .buttons button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #0d3b4a;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .buttons button:hover {
+            background-color: #0d3b4a;
+        }
+
+        .functionbtn{
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+
+        }
+        .functionbtn button {
+
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #0d3b4a;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+
+        }
+
+
+    </style>
+</head>
+<body>
+    <h1>Meditation Timer</h1>
+    <div class="clock" id="clock">00:00:00</div>
+
+    <div class="functionbtn" >
+    <button onclick="pauseTimer()">Pause</button>
+    <button onclick="restartTimer()">Restart</button>
+    </div>
+
+    <div class="buttons">
+        <button onclick="startTimer(5)">5 Minutes</button>
+        <button onclick="startTimer(10)">10 Minutes</button>
+        <button onclick="startTimer(20)">20 Minutes</button>
+        <button onclick="setCustomTime()">Custom</button>
+        
+    </div>
+
+    <!-- Audio for Meditation Music -->
+    <audio id="meditationMusic" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-slowmotion.mp3" type="audio/mp3">
+    </audio>
+
+    <script>
+        let countdown;
+        let remainingTime = 0;
+        let isPaused = false;
+        let initialTime = 0;
+        const clock = document.getElementById('clock');
+        const meditationMusic = document.getElementById('meditationMusic');
+
+        // Function to format time as HH:MM:SS
+        function formatTime(seconds) {
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return`${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Start Timer function
+        function startTimer(minutes) {
+            initialTime = minutes * 60;
+            remainingTime = initialTime;
+            clearInterval(countdown);
+            meditationMusic.play();
+            countdown = setInterval(updateClock, 1000);
+        }
+
+        // Update clock display
+        function updateClock() {
+            if (remainingTime > 0 && !isPaused) {
+                clock.textContent = formatTime(remainingTime);
+                remainingTime--;
+            } else if (remainingTime <= 0) {
+                clearInterval(countdown);
+                meditationMusic.pause();
+                meditationMusic.currentTime = 0;
+                alert("Meditation session complete!");
+            }
+        }
+
+        // Pause Timer
+        function pauseTimer() {
+            isPaused = !isPaused;
+            if (isPaused) {
+                meditationMusic.pause();
+            } else {
+                meditationMusic.play();
+            }
+        }
+
+        // Restart Timer
+        function restartTimer() {
+            clearInterval(countdown);
+            remainingTime = initialTime;
+            clock.textContent = formatTime(remainingTime);
+            isPaused = false;
+            meditationMusic.currentTime = 0;
+            meditationMusic.play();
+            countdown = setInterval(updateClock, 1000);
+        }
+
+        // Custom Time input
+        function setCustomTime() {
+            const minutes = parseInt(prompt("Enter the number of minutes for meditation:", "5"), 10);
+            if (!isNaN(minutes) && minutes > 0) {
+                startTimer(minutes);
+            }
+        }
+    </script>
+</body>
+</html>

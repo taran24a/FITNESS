@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Calendar and Streak Tracker</title>
+    <link rel="icon" href="favicon.png" type="image/x-icon"> <!-- Favicon link -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to right, #4a9b9c, #1c6293);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .weekday {
+            font-weight: bold;
+            padding: 10px;
+            color: #ffd700;
+        }
+
+        .day {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .day.active {
+            background: #ffd700;
+            color: #333;
+        }
+
+        .day.today {
+            border: 2px solid #ffd700;
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        .controls input,
+        .controls button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .controls input {
+            width: calc(100% - 30px);
+            max-width: 300px;
+        }
+
+        .controls button {
+            background-color: #ffd700;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .controls button:hover {
+            background-color: #ffb400;
+        }
+
+        .streak {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            .day {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Workout Calendar & Streak Tracker</h1>
+
+        <!-- Calendar Grid with Weekdays -->
+        <div class="calendar" id="calendar">
+            <!-- Weekday Labels -->
+            <div class="weekday">Sun</div>
+            <div class="weekday">Mon</div>
+            <div class="weekday">Tue</div>
+            <div class="weekday">Wed</div>
+            <div class="weekday">Thu</div>
+            <div class="weekday">Fri</div>
+            <div class="weekday">Sat</div>
+            <!-- Days will be populated by JavaScript -->
+        </div>
+
+        <!-- Input for Reminders and Streak Display -->
+        <div class="controls">
+            <input type="text" id="reminderInput" placeholder="Set reminder for today...">
+            <button onclick="setReminder()">Set Reminder</button>
+            <div class="streak" id="streakDisplay">Current Streak: 0 days</div>
+        </div>
+    </div>
+
+    <script>
+        const calendarEl = document.getElementById('calendar');
+        const streakDisplay = document.getElementById('streakDisplay');
+        const reminderInput = document.getElementById('reminderInput');
+
+        let workoutDays = []; // Array to track workout days
+        let streak = 0; // Current streak count
+
+        // Initialize the calendar with days and empty cells for alignment
+        function createCalendar() {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const firstDay = new Date(today.getFullYear(), currentMonth, 1).getDay();
+            const daysInMonth = new Date(today.getFullYear(), currentMonth + 1, 0).getDate();
+            const currentDate = today.getDate();
+
+            // Add empty cells before the first day of the month
+            for (let i = 0; i < firstDay; i++) {
+                const emptyEl = document.createElement('div');
+                calendarEl.appendChild(emptyEl);
+            }
+
+            // Populate days of the current month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.classList.add('day');
+                dayEl.textContent = day;
+
+                // Mark today's date
+                if (day === currentDate) {
+                    dayEl.classList.add('today');
+                }
+
+                // Toggle workout days on click
+                dayEl.addEventListener('click', () => toggleWorkout(dayEl, day));
+                calendarEl.appendChild(dayEl);
+            }
+        }
+
+        // Toggle workout day selection
+        function toggleWorkout(dayEl, day) {
+            if (workoutDays.includes(day)) {
+                workoutDays = workoutDays.filter(d => d !== day);
+                dayEl.classList.remove('active');
+            } else {
+                workoutDays.push(day);
+                dayEl.classList.add('active');
+            }
+            updateStreak();
+        }
+
+        // Set a reminder for today
+        function setReminder() {
+            const today = new Date().getDate();
+            const reminderText = reminderInput.value.trim();
+
+            if (reminderText) {
+                alert(`Reminder set for today: ${reminderText}`);
+                toggleWorkout(document.querySelector(`.day:nth-child(${today + 7})`), today);
+                reminderInput.value = ''; // Clear input field
+            } else {
+                alert("Please enter a reminder text.");
+            }
+        }
+
+        // Update streak count based on workoutDays
+        function updateStreak() {
+            workoutDays.sort((a, b) => a - b);
+
+            streak = 1;
+            for (let i = 1; i < workoutDays.length; i++) {
+                if (workoutDays[i] === workoutDays[i - 1] + 1) {
+                    streak++;
+                } else {
+                    streak = 1;
+                }
+            }
+
+            streakDisplay.textContent = `Current Streak: ${streak} day${streak > 1 ? 's' : ''}`;
+        }
+
+        // Initialize calendar on page load
+        createCalendar();
+    </script>
+
+</body>
+</html>
