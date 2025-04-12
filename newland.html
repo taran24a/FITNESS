@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
     <title>FitFusion</title>
     <link rel="icon" href="favicon.png" type="image/x-icon"> <!-- Favicon link -->
     
@@ -41,7 +41,7 @@
 
         .navbar {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             padding: 15px 20px;
             gap: 30px;
@@ -53,6 +53,40 @@
             font-weight: bold;
             text-shadow: 1px 1px 5px #000;
         }
+        .nav-links {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: #e8ecef;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #5596b3;
+            text-shadow: 1px 1px 6px rgba(20, 91, 157, 0.7);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .menu-toggle .bar {
+            width: 25px;
+            height: 3px;
+            background-color: #e8ecef;
+            margin: 4px 0;
+            border-radius: 2px;
+        }
+
 
         /* Hero Section */
         .section-header {
@@ -104,31 +138,19 @@
             0% { transform: translateX(0); }
             100% { transform: translateX(calc(-250px * 5 - 100px)); } /* Adjusted for seamless transition */
         }
+        
 
-        /* Nav Links Styling */
-        .nav-links {
-            list-style-type: none;
-            display: flex;
-            gap: 20px;
-        }
-
-        .nav-links a {
-            color: #e8ecef;
-            text-decoration: none;
-            font-weight: bold;
-            padding: 5px 10px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: #5596b3;
-            text-shadow: 1px 1px 6px rgba(20, 91, 157, 0.7);
-        }
-
+        
+        
         /* Hover effect for individual photos */
         .photo:hover {
             transform: scale(1.1) rotateY(0deg); /* Emphasizes 3D pop */
         }
+        .username {
+            font-size: large;
+            margin-top: 10px;
+        }
+
 
         /* Responsive Styles */
         @media (max-width: 768px) {
@@ -140,34 +162,49 @@
                 width: 100%;
                 top: 60px;
                 left: 0;
-                padding-left: 0;
+                padding: 20px 0;
                 z-index: 1;
+                text-align: center;
             }
 
             .nav-links.active {
                 display: flex;
-                align-items: center;
+               
             }
-
-            .menu-toggle {
+            .menu-toggle{
                 display: flex;
+                
             }
-
             .navbar {
-                flex-direction: column;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                
+            }
+            .logo {
+                font-size: 22px;
+            }
+            .photo-reel{
+                overflow: auto;
+            }
+            .photo{
+                min-width: 200px;
+                height: 120px;
+                
             }
         }
-
-        .username {
-            font-size: large;
-            margin-top: 10px;
-        }
+            
     </style>
 </head>
 <body>
     <header>
         <nav class="navbar">
             <div class="logo">FIT FUSION</div>
+            <div class="menu-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
             <ul class="nav-links">
                 <li><a href="workout.html">WORKOUT</a></li>
                 <li><a href="tutorial.html">TUTORIALS</a></li>
@@ -176,11 +213,7 @@
                 <li><a href="meditation.html">MEDITATION</a></li>
                 
             </ul>
-            <div class="menu-toggle" id="mobile-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
+            
         </nav>
     </header>
 
