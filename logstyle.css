@@ -472,7 +472,7 @@ html, body {
 @media (max-width: 480px) {
     .background, .container {
         background-image: url('https://img.freepik.com/premium-photo/muscular-attractive-caucasian-bearded-man-lifting-two-kettlebells-gym-weight-plates-dumbbell-tires-background_136403-4655.jpg?w=600');
-        filter: blur(1px); /* Minimal blur on mobile */
+        filter: blur(0); /* Minimal blur on mobile */
     }
 }
 
