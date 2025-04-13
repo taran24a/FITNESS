@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workout Calendar and Streak Tracker</title>
-    <link rel="icon" href="favicon.png" type="image/x-icon"> <!-- Favicon link -->
+    <link rel="icon" href="favicon.png" type="image/x-icon">
     <style>
         * {
             margin: 0;
@@ -24,7 +24,7 @@
         }
 
         .container {
-            width: 90%;
+            width: 100%;
             max-width: 700px;
             background: rgba(255, 255, 255, 0.1);
             padding: 20px;
@@ -34,25 +34,26 @@
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 24px;
             margin-bottom: 20px;
         }
 
         .calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
+            gap: 8px;
             margin-top: 20px;
         }
 
         .weekday {
             font-weight: bold;
-            padding: 10px;
+            padding: 8px 0;
             color: #ffd700;
+            font-size: 12px;
         }
 
         .day {
-            padding: 15px;
+            padding: 10px 5px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 5px;
             cursor: pointer;
@@ -60,6 +61,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            min-height: 35px;
         }
 
         .day.active {
@@ -71,28 +75,34 @@
             border: 2px solid #ffd700;
         }
 
-        .controls {
-            margin-top: 20px;
+        .empty-day {
+            visibility: hidden;
         }
 
-        .controls input,
-        .controls button {
-            padding: 10px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .controls input {
-            width: calc(100% - 30px);
-            max-width: 300px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            width: 100%;
         }
 
         .controls button {
+            padding: 10px;
             background-color: #ffd700;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s;
+            font-size: 14px;
+            width: 100%;
         }
 
         .controls button:hover {
@@ -100,30 +110,47 @@
         }
 
         .streak {
-            margin-top: 20px;
-            font-size: 20px;
+            margin-top: 15px;
+            font-size: 18px;
         }
 
         /* Responsive Styles */
-        @media (max-width: 600px) {
-            .day {
+        @media (min-width: 500px) {
+            .controls {
+                flex-direction: row;
+                align-items: center;
+            }
+            
+            .controls input {
+                flex: 1;
+                max-width: 300px;
+            }
+            
+            .controls button {
+                width: auto;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .weekday {
+                font-size: 14px;
                 padding: 10px;
             }
-
-            h1 {
-                font-size: 24px;
+            
+            .day {
+                padding: 15px;
+                font-size: 16px;
             }
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>Workout Calendar & Streak Tracker</h1>
 
-        <!-- Calendar Grid with Weekdays -->
         <div class="calendar" id="calendar">
-            <!-- Weekday Labels -->
             <div class="weekday">Sun</div>
             <div class="weekday">Mon</div>
             <div class="weekday">Tue</div>
@@ -131,15 +158,13 @@
             <div class="weekday">Thu</div>
             <div class="weekday">Fri</div>
             <div class="weekday">Sat</div>
-            <!-- Days will be populated by JavaScript -->
         </div>
 
-        <!-- Input for Reminders and Streak Display -->
         <div class="controls">
             <input type="text" id="reminderInput" placeholder="Set reminder for today...">
             <button onclick="setReminder()">Set Reminder</button>
-            <div class="streak" id="streakDisplay">Current Streak: 0 days</div>
         </div>
+        <div class="streak" id="streakDisplay">Current Streak: 0 days</div>
     </div>
 
     <script>
@@ -147,41 +172,39 @@
         const streakDisplay = document.getElementById('streakDisplay');
         const reminderInput = document.getElementById('reminderInput');
 
-        let workoutDays = []; // Array to track workout days
-        let streak = 0; // Current streak count
+        let workoutDays = [];
+        let streak = 0;
 
-        // Initialize the calendar with days and empty cells for alignment
         function createCalendar() {
             const today = new Date();
+            const currentYear = today.getFullYear();
             const currentMonth = today.getMonth();
-            const firstDay = new Date(today.getFullYear(), currentMonth, 1).getDay();
-            const daysInMonth = new Date(today.getFullYear(), currentMonth + 1, 0).getDate();
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
             const currentDate = today.getDate();
 
-            // Add empty cells before the first day of the month
+            // Add empty cells for days before the first day of the month
             for (let i = 0; i < firstDay; i++) {
                 const emptyEl = document.createElement('div');
+                emptyEl.classList.add('empty-day');
                 calendarEl.appendChild(emptyEl);
             }
 
-            // Populate days of the current month
+            // Create day elements
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayEl = document.createElement('div');
                 dayEl.classList.add('day');
                 dayEl.textContent = day;
 
-                // Mark today's date
                 if (day === currentDate) {
                     dayEl.classList.add('today');
                 }
 
-                // Toggle workout days on click
                 dayEl.addEventListener('click', () => toggleWorkout(dayEl, day));
                 calendarEl.appendChild(dayEl);
             }
         }
 
-        // Toggle workout day selection
         function toggleWorkout(dayEl, day) {
             if (workoutDays.includes(day)) {
                 workoutDays = workoutDays.filter(d => d !== day);
@@ -193,25 +216,28 @@
             updateStreak();
         }
 
-        // Set a reminder for today
         function setReminder() {
             const today = new Date().getDate();
             const reminderText = reminderInput.value.trim();
 
             if (reminderText) {
                 alert(`Reminder set for today: ${reminderText}`);
-                toggleWorkout(document.querySelector(`.day:nth-child(${today + 7})`), today);
-                reminderInput.value = ''; // Clear input field
+                // Find today's day element (accounting for weekday headers and empty cells)
+                const allDays = document.querySelectorAll('.day:not(.empty-day)');
+                const todayIndex = today - 1;
+                if (allDays[todayIndex]) {
+                    toggleWorkout(allDays[todayIndex], today);
+                }
+                reminderInput.value = '';
             } else {
                 alert("Please enter a reminder text.");
             }
         }
 
-        // Update streak count based on workoutDays
         function updateStreak() {
             workoutDays.sort((a, b) => a - b);
+            streak = workoutDays.length > 0 ? 1 : 0;
 
-            streak = 1;
             for (let i = 1; i < workoutDays.length; i++) {
                 if (workoutDays[i] === workoutDays[i - 1] + 1) {
                     streak++;
@@ -220,12 +246,10 @@
                 }
             }
 
-            streakDisplay.textContent = `Current Streak: ${streak} day${streak > 1 ? 's' : ''}`;
+            streakDisplay.textContent = `Current Streak: ${streak} day${streak !== 1 ? 's' : ''}`;
         }
 
-        // Initialize calendar on page load
         createCalendar();
     </script>
-
 </body>
 </html>
